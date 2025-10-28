@@ -135,14 +135,6 @@ function Login({ onSwitchToRegister }) {
       <a href="#" className="forgot-password">
         ¿Olvidaste tu contraseña?
       </a>
-
-      <div className="demo-section">
-        <p className="demo-title">Cuenta de Administrador:</p>
-        <div className="admin-credentials">
-          <p><strong>Email:</strong> admin@mowi.com</p>
-          <p><strong>Contraseña:</strong> Admin123!</p>
-        </div>
-      </div>
     </form>
   );
 }
