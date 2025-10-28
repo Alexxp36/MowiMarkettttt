@@ -232,26 +232,23 @@
   margin: 0 0 15px 0;
 }
 
-.demo-button {
-  width: 100%;
-  padding: 12px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 10px;
-}
-
-.demo-button:hover {
+.admin-credentials {
   background: #f8f8f8;
-  border-color: #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid #FF8C00;
 }
 
-.demo-button:last-child {
-  margin-bottom: 0;
+.admin-credentials p {
+  margin: 8px 0;
+  font-size: 13px;
+  color: #555;
+  font-family: 'Courier New', monospace;
+}
+
+.admin-credentials strong {
+  color: #333;
+  font-weight: 600;
 }
 
 /* Texto de términos */

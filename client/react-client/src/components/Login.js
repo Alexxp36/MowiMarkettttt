@@ -46,7 +46,7 @@ function Login({ onSwitchToRegister }) {
   };
 
   // Manejar envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validar todos los campos
@@ -61,18 +61,43 @@ function Login({ onSwitchToRegister }) {
     const hasErrors = Object.values(newErrors).some(error => error !== '');
 
     if (!hasErrors) {
-      console.log('Login exitoso:', formData);
-      alert('¡Inicio de sesión exitoso! (Conectar con Django backend)');
+      try {
+        // Llamada al backend de Django
+        const response = await fetch('http://localhost:8000/api/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
 
-      // Aquí iría la llamada al backend de Django
-      // fetch('/api/login', { method: 'POST', body: JSON.stringify(formData) })
+        const data = await response.json();
+
+        if (response.ok) {
+          // Guardar tokens en localStorage
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+          localStorage.setItem('user', JSON.stringify(data.user));
+
+          alert(`¡Bienvenido ${data.user.name}!`);
+          console.log('Usuario:', data.user);
+
+          // Aquí podrías redirigir a la página principal o dashboard
+          // window.location.href = '/dashboard';
+        } else {
+          setErrors({
+            ...errors,
+            password: data.error || 'Credenciales inválidas'
+          });
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        setErrors({
+          ...errors,
+          password: 'Error de conexión con el servidor'
+        });
+      }
     }
-  };
-
-  // Función para cuentas demo
-  const handleDemoLogin = (type) => {
-    console.log(`Iniciando sesión como ${type}`);
-    alert(`Iniciando sesión como ${type}`);
   };
 
   return (
@@ -112,21 +137,11 @@ function Login({ onSwitchToRegister }) {
       </a>
 
       <div className="demo-section">
-        <p className="demo-title">Cuentas de demostración:</p>
-        <button
-          type="button"
-          className="demo-button"
-          onClick={() => handleDemoLogin('Cliente')}
-        >
-          Entrar como Cliente
-        </button>
-        <button
-          type="button"
-          className="demo-button"
-          onClick={() => handleDemoLogin('Administrador')}
-        >
-          Entrar como Administrador
-        </button>
+        <p className="demo-title">Cuenta de Administrador:</p>
+        <div className="admin-credentials">
+          <p><strong>Email:</strong> admin@mowi.com</p>
+          <p><strong>Contraseña:</strong> Admin123!</p>
+        </div>
       </div>
     </form>
   );

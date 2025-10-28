@@ -73,7 +73,7 @@ function RegisterForm() {
   };
 
   // Manejar envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validar todos los campos
@@ -90,19 +90,44 @@ function RegisterForm() {
     const hasErrors = Object.values(newErrors).some(error => error !== '');
 
     if (!hasErrors) {
-      console.log('Registro exitoso:', formData);
-      alert('¡Cuenta creada exitosamente! (Conectar con Django backend)');
+      try {
+        // Llamada al backend de Django
+        const response = await fetch('http://localhost:8000/api/register/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+          })
+        });
 
-      // Aquí iría la llamada al backend de Django
-      // fetch('/api/register', { method: 'POST', body: JSON.stringify(formData) })
+        const data = await response.json();
 
-      // Limpiar formulario
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-      });
+        if (response.ok) {
+          alert('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
+
+          // Limpiar formulario
+          setFormData({
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+          });
+        } else {
+          // Mostrar errores del backend
+          if (data.email) {
+            setErrors({ ...errors, email: data.email[0] });
+          } else {
+            alert(data.error || 'Error al crear la cuenta');
+          }
+        }
+      } catch (error) {
+        console.error('Error al registrarse:', error);
+        alert('Error de conexión con el servidor');
+      }
     }
   };
 
